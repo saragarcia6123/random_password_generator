@@ -1,8 +1,10 @@
 import random
 
-def gen_random_password() -> list[str]:
+special_range = [(33, 33),(35,47),(58, 64),(91, 96),(123, 126)]
+
+def gen_random_password(min_length: int, max_length: int) -> list[str]:
     password = []
-    length = random.randint(12,24)
+    length = random.randint(min_length, max_length)
     for i in range(length):
         char = chr(gen_random_char_ascii())
         password.append(char)
@@ -11,15 +13,15 @@ def gen_random_password() -> list[str]:
 def gen_random_char_ascii() -> int:
     random_type = random.randint(0,3)
     if random_type == 0:
-        return random.randint(65,90) #uppercase letter ascii
+        return random.randint(65,90) # Uppercase letter
     elif random_type == 1:
-        return random.randint(97,122) #lowercase letter ascii
+        return random.randint(97,122) #Lowercase letter
     elif random_type == 2:
-        return random.randint(48,57) #number
+        return random.randint(48,57) #Number
     else:
-        special_range = [(33, 33),(35,47),(58, 64),(91, 96),(123, 126)]
+        global special_range
         start, end = random.choice(special_range)
-        return random.randint(start, end) #special char ascii
+        return random.randint(start, end) # Special character
 
 def is_valid_password(password: list[str]) -> bool:
     if len(password) < 12:
@@ -39,7 +41,7 @@ def is_valid_password(password: list[str]) -> bool:
         elif 48 <= ascii_val <= 57:
             has_num = True
         else:
-            special_range = [(33, 33),(35,47),(58, 64),(91, 96),(123, 126)]
+            global special_range
             in_range = any(start <= ascii_val <= end for start, end in special_range)
             if in_range:
                 has_special = True
@@ -48,13 +50,14 @@ def is_valid_password(password: list[str]) -> bool:
             return True
     return False
 
-def gen_until_valid():
+def gen_until_valid(min_length, max_length) -> str:
     password = []
     while not is_valid_password(password):
-        password = gen_random_password()
+        password = gen_random_password(min_length, max_length)
     return ''.join(password)
 
-passwords = [gen_until_valid() for i in range(10)]
+number_of_passwords = int(input("Enter number of passwords to generate: "))
+passwords = [gen_until_valid(12, 24) for i in range(number_of_passwords)]
 
 for p in passwords:
     print(p)
